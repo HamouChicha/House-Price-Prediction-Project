@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import plotly.express as px
+from sklearn.metrics import mean_squared_error, r2_score
 
 
 # function to plot the box plot of features
@@ -36,10 +37,13 @@ def heat_map(X, numerical_features):
 
     # Create an interactive heatmap using Plotly
     fig = px.imshow(correlation_matrix,
-                    color_continuous_scale='Viridis',
+                    color_continuous_scale='RdBu',
                     title='Correlation Heatmap',
                     labels=dict(x='Features', y='Features', color='Correlation'),
                     aspect='auto')
+
+    # Update layout to adjust the size
+    fig.update_layout(width=900, height=900)
 
     # Show the figure
     fig.show()
@@ -56,8 +60,7 @@ def plot_low_variance(X, num_cols):
     # Sort the DataFrame by variance
     variance_df = variance_df.sort_values(by='Variance', ascending=False)
     # Plotting
-    top_n = num_cols # Number of top features to display
-    feature_df.nlargest(top_n, 'Variance').plot(kind='barh', x='Feature', y='Variance', figsize=(10, 6), color='teal')
+    variance_df.nsmallest(num_cols, 'Variance').plot(kind='barh', x='Feature', y='Variance', figsize=(10, 6), color='teal')
     plt.title(f'Lowest {num_cols} Feature Variances')
     plt.xlabel('Variance')
     plt.ylabel('Features')
@@ -76,9 +79,23 @@ def plot_k_best(selector, feature_names, num_cols):
     feature_df = feature_df.sort_values(by='Score', ascending=False)
 
     # Plotting
-    top_n = num_cols # Number of top features to display
-    feature_df.nlargest(top_n, 'Score').plot(kind='barh', x='Feature', y='Score', figsize=(10, 6), color='teal')
-    plt.title('Top N Feature Scores')
+    feature_df.nlargest(num_cols, 'Score').plot(kind='barh', x='Feature', y='Score', figsize=(10, 6), color='teal')
+    plt.title(f'Top {num_cols} Feature Scores')
     plt.xlabel('Score')
     plt.ylabel('Features')
     plt.show()
+
+
+# function to evaluate the model
+def evaluate_model(model, X_train, y_train, X_test, y_test):
+    print("---------------------- Evaluating on training data ...")
+    y_pred = model.predict(X_train)
+    print(f"Train MSE: {mean_squared_error(y_train, y_pred):.4f}\nTrain R2: {r2_score(y_train, y_pred):.4f}")
+
+    print("---------------------- Evaluating on testing data ...")
+    y_pred = model.predict(X_test)
+    print(f"Test MSE: {mean_squared_error(y_test, y_pred):.4f},\nTest R2: {r2_score(y_test, y_pred):.4f}")
+
+    
+    
+
