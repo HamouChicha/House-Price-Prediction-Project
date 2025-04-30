@@ -4,13 +4,13 @@
 This project aims to predict house prices using a dataset from Kaggle. It includes various stages of data processing, model building, and evaluation using multiple machine learning regression algorithms.
 
 ## Table of Contents
-- [Project Description](## Project Description)
-- [Dataset](## Dataset)
-- [Files Included](## Files Included)
-- [Prerequisites](## Prerequisites)
-- [Usage](## Usage)
-- [Model Evaluation](## Modeln Evaluation)
-- [Algorithms Used](## Algorithms Used)
+- Project Description
+- Dataset
+- Files Included
+- Prerequisites
+- Usage
+- Model Evaluation
+- Algorithms Used
 
 ## Project Description
 The House Price Prediction project involves:
