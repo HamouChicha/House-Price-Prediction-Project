@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import plotly.express as px
 from sklearn.metrics import mean_squared_error, r2_score
 
 
@@ -30,24 +29,35 @@ def box_plot(X, features, n):
     plt.show()
 
 
-# function to plot the interactive heat map of features
-def heat_map(X, numerical_features):
+# function to plot the heat map of th correlated features above a certain threshold
+def heat_map(X, numerical_features, threshold=0.5):
     # Calculate the correlation matrix
     correlation_matrix = X[numerical_features].corr()
 
-    # Create an interactive heatmap using Plotly
-    fig = px.imshow(correlation_matrix,
-                    color_continuous_scale='RdBu',
-                    title='Correlation Heatmap',
-                    labels=dict(x='Features', y='Features', color='Correlation'),
-                    aspect='auto')
+    # Create a mask to filter out correlations below the threshold
+    mask = correlation_matrix.abs() > threshold
 
-    # Update layout to adjust the size
-    fig.update_layout(width=900, height=900)
+    # Apply the mask to the correlation matrix
+    filtered_correlation_matrix = correlation_matrix[mask].dropna(axis=0, how='all').dropna(axis=1, how='all')
 
-    # Show the figure
-    fig.show()
+    # Set up the matplotlib figure
+    plt.figure(figsize=(20, 20))
 
+    # Create a heatmap using Seaborn
+    sns.heatmap(filtered_correlation_matrix, 
+                annot=True,             # Annotate cells with the correlation coefficient
+                cmap='RdBu',           # Color map
+                center=0,              # Center the color map at 0
+                square=False,           # Make cells square
+                cbar_kws={"shrink": .9})  # Color bar size
+
+    # Set the titles and labels
+    plt.title('Filtered Correlation Heatmap', fontsize=16)
+    plt.xlabel('Features', fontsize=12)
+    plt.ylabel('Features', fontsize=12)
+
+    # Show the plot
+    plt.show()
 
 # function to visualize the lowest feature variances
 def plot_low_variance(X, num_cols):
